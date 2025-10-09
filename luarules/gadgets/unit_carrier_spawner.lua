@@ -88,6 +88,7 @@ local spawnCmd = {
 local carrierDockingList = {}
 local carrierQueuedDockingCount = 0
 local previousHealFrame = 0
+local Untargetable = Spring.GetUnitRulesParam(targetID, "drone_docked_untargetable")
 
 local carrierAvailableDockingCount = 1000   -- Limits the amount of drones that can dock simultaneously. Lowering this will increase overall game performance, but some drones might not be able to dock in time. Increasing this above 1500 could cause memory issues in large battles.
 local dockingQueueOffset = 0
@@ -1478,7 +1479,7 @@ local function DockUnits(dockingqueue, queuestart, queueend)
 									if carrierMetaList[unitID].dockUntargetable == 1 then
 									    spSetUnitRulesParam(subUnitID, "drone_docked_untargetable", 1)
 									else
-									    spSetUnitRulesParam(subUnitID, "drone_docked_untargetable", 0)
+									    spSetUnitRulesParam(subUnitID, "drone_docked_untargetable", nil)
 									end
 
 								end
@@ -1610,8 +1611,8 @@ end
 
 function gadget:AllowWeaponTarget(attackerID, targetID, attackerWeaponNum, defaultPriority)
     if targetID then
-        local v = Spring.GetUnitRulesParam(targetID, "drone_docked_untargetable")
-        if v == 1 then
+		local Untargetable = spGetUnitRulesParam(targetID, "drone_docked_untargetable")
+        if Untargetable == 1 then
             return false, 0
         end
     end
